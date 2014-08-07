@@ -118,15 +118,16 @@ class CmdOOCLook(MuxPlayerCommand):
                          MAX_NR_CHARACTERS > 1 and " (%i/%i)" % (len(characters), MAX_NR_CHARACTERS) or "")
 
             for char in characters:
-                csessid = char.sessid
+                csessid = char.sessid.get()
                 if csessid:
                     # character is already puppeted
-                    sess = player.get_session(csessid)
-                    sid = sess in sessions and sessions.index(sess) + 1
-                    if sess and sid:
-                        string += "\n - {G%s{n [%s] (played by you in session %i)" % (char.key, ", ".join(char.permissions.all()), sid)
-                    else:
-                        string += "\n - {R%s{n [%s] (played by someone else)" % (char.key, ", ".join(char.permissions.all()))
+                    sessi = player.get_session(csessid)
+                    for sess in utils.make_iter(sessi):
+                        sid = sess in sessions and sessions.index(sess) + 1
+                        if sess and sid:
+                            string += "\n - {G%s{n [%s] (played by you in session %i)" % (char.key, ", ".join(char.permissions.all()), sid)
+                        else:
+                            string += "\n - {R%s{n [%s] (played by someone else)" % (char.key, ", ".join(char.permissions.all()))
                 else:
                     # character is "free to puppet"
                     string += "\n - %s [%s]" % (char.key, ", ".join(char.permissions.all()))
@@ -252,12 +253,17 @@ class CmdIC(MuxPlayerCommand):
             return
         if new_character.player:
             # may not puppet an already puppeted character
-            if new_character.sessid and new_character.player == player:
-                # as a safeguard we allow "taking over chars from
-                # your own sessions.
-                player.msg("{c%s{n{R is now acted from another of your sessions.{n" % (new_character.name), sessid=new_character.sessid)
-                player.unpuppet_object(new_character.sessid)
-                self.msg("Taking over {c%s{n from another of your sessions." % new_character.name)
+            if new_character.sessid.count() and new_character.player == player:
+                # as a safeguard we allow "taking over" chars from your own sessions.
+                if MULTISESSION_MODE in (1, 3):
+                    txt = "{c%s{n{G is now shared from another of your sessions.{n"
+                    txt2 =  "Sharing {c%s{n with another of your sessions."
+                else:
+                    txt = "{c%s{n{R is now acted from another of your sessions.{n"
+                    txt2 =  "Taking over {c%s{n from another of your sessions."
+                player.unpuppet_object(new_character.sessid.get())
+                player.msg(txt % (new_character.name), sessid=new_character.sessid.get())
+                self.msg(txt2 % new_character.name)
             elif new_character.player != player and new_character.player.is_connected:
                 self.msg("{c%s{r is already acted by another player.{n" % new_character.name)
                 return
