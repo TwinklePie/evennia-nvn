@@ -154,7 +154,7 @@ class CmdApprove(Command):
             self.caller.msg(errmsg)      
             return
         # Use search to handle duplicate/nonexistant results.
-        app_obj = self.caller.search(self.args, use_nicks=True)
+        app_obj = self.caller.search(self.args.name, use_nicks=True)
         if not app_obj:
             self.caller.msg(errmsg)     
             return
