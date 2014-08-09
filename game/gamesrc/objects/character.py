@@ -41,7 +41,7 @@ class Character(DefaultCharacter):
     """
     def at_object_creation(self):
         "This is called when the object is first created, only"
-        self.db.approved = false
+        self.db.approved = False
         
         self.db.full_name = ""
         self.db.gender = ""
@@ -65,8 +65,8 @@ class Character(DefaultCharacter):
         self.db.feel = ""
         self.db.feel_notify = ""
         self.db.look_notify = ""
-        self.db.hide_location = false
-        self.db.hide_idle = false
+        self.db.hide_location = False
+        self.db.hide_idle = False
         self.db.rp_prefs = ""
         self.db.player_notes = ""
         self.db.character_notes = ""

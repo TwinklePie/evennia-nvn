@@ -162,11 +162,11 @@ class CmdApprove(Command):
             self.caller.msg(errmsg)     
             return
         if not app_obj.approved:
-            app_obj.approved = true
+            app_obj.approved = True
             self.caller.msg("You have approved '%s'." % args)
             args.caller.msg("You have been approved.")
         else:
-            app_obj.approved = false
+            app_obj.approved = False
             self.caller.msg("You have unapproved '%s'" % args)
             args.caller.msg("You have been unapproved.")
      
