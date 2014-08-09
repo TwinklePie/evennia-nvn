@@ -41,8 +41,37 @@ class Character(DefaultCharacter):
     """
     def at_object_creation(self):
         "This is called when the object is first created, only"
-        self.db.race = ""
-        self.db.sex = ""
+        self.db.approved = false
+        
+        self.db.full_name = ""
+        self.db.gender = ""
+        self.db.species = ""
+        self.db.alignment = ""
+        self.db.job = ""
+        self.db.age = ""
+        self.db.apparent_age = ""
+        self.db.coat = ""
+        self.db.mane = ""
+        self.db.eyes = ""
+        self.db.cutie_mark = ""
+        self.db.sexuality = ""
+        self.db.height = ""
+        self.db.weight = ""
+        self.db.short_desc = ""
+        self.db.smell = ""
+        self.db.smell_notify = ""
+        self.db.taste = ""
+        self.db.taste_notify = ""
+        self.db.feel = ""
+        self.db.feel_notify = ""
+        self.db.look_notify = ""
+        self.db.hide_location = false
+        self.db.hide_idle = false
+        self.db.rp_prefs = ""
+        self.db.player_notes = ""
+        self.db.character_notes = ""
+        self.db.special = ""
+        
         self.db.power = 1
         self.db.combat_score = 1
     
