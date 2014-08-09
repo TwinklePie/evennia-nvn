@@ -75,7 +75,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
         # any commands you add below will overload the default ones.
         #
-        self.add(muckcommands.CmdSetPower())    
+
+        # General character commands
+        self.add(muckcommands.CmdHoof())
+
+        # Admin commands
         self.add(wizcommands.CmdApprove())
         #self.add(menusystem.CmdMenuTest())
         #self.add(lineeditor.CmdEditor())

@@ -134,34 +134,33 @@ class MuxCommand(default_cmds.MuxCommand):
 # end of muckcommands.py
 from ev import Command    
 
-class CmdSetPower(Command):
+class CmdHoof(Command):
     """
-    set the power of a character
+    This provides information about the selected character.
 
     Usage: 
-      +setpower <1-10>
+      +hoof <name>
 
-    This sets the power of the current character. This can only be 
-    used during character generation.    
+    This command is similar to @finger, pinfo, or cinfo on other systems in that
+    it provides publically accessible information about the character.
     """
 
-    key = "+setpower"
-    help_category = "muck"
+    key = "+hoof"
+    help_category = "General"
 
     def func(self):
         "This performs the actual command"
-        errmsg = "You must supply a number between 1 and 10."
+        caller = self.caller
         if not self.args:
-            self.caller.msg(errmsg)      
+            caller.msg("Hoof who?")
             return
-        try:
-            power = int(self.args)  
-        except ValueError:
-            self.caller.msg(errmsg)
+        #print "general/hoof:", caller, caller.location, self.args, caller.location.contents
+        obj = caller.search(self.args)
+        if not obj:
+            caller.msg("Hoof who?")
             return
-        if not (1 <= power <= 10):
-            self.caller.msg(errmsg)
-            return
-        # at this point the argument is tested as valid. Let's set it.
-        self.caller.db.power = power
-        self.caller.msg("Your Power was set to %i." % power)        
+        #print obj, obj.location, caller, caller == obj.location
+        outstr = "{m==============================================================================\n"
+        outstr += "%s the %s %s\n" % (obj.name, obj.gender, obj.species)
+        outstr += "{m==============================================================================\n"
+        caller.msg(outstr)

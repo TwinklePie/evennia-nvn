@@ -156,12 +156,12 @@ class CmdApprove(Command):
         if not self.args:
             caller.msg("Approve who?")
             return
-        print "wizard/approve:", caller, caller.location, self.args, caller.location.contents
+        #print "wizard/approve:", caller, caller.location, self.args, caller.location.contents
         obj = caller.search(self.args)
         if not obj:
             caller.msg("Approve who?")
             return
-        print obj, obj.location, caller, caller == obj.location
+        #print obj, obj.location, caller, caller == obj.location
         if not obj.db.approved:
             obj.db.approved = True
             caller.msg("You have approved '%s'." % obj.name)
