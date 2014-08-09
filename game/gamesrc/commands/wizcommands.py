@@ -154,7 +154,7 @@ class CmdApprove(Command):
             self.caller.msg(errmsg)      
             return
         # Use search to handle duplicate/nonexistant results.
-        app_obj = self.caller.search(args, use_nicks=True)
+        app_obj = self.caller.search(self.args, use_nicks=True)
         if not app_obj:
             self.caller.msg(errmsg)     
             return
@@ -163,10 +163,10 @@ class CmdApprove(Command):
             return
         if not app_obj.approved:
             app_obj.approved = True
-            self.caller.msg("You have approved '%s'." % args)
-            args.caller.msg("You have been approved.")
+            self.caller.msg("You have approved '%s'." % self.args)
+            self.args.msg("You have been approved.")
         else:
             app_obj.approved = False
-            self.caller.msg("You have unapproved '%s'" % args)
-            args.caller.msg("You have been unapproved.")
+            self.caller.msg("You have unapproved '%s'" % self.args)
+            self.args.msg("You have been unapproved.")
      
