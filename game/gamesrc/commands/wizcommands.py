@@ -134,39 +134,39 @@ class MuxCommand(default_cmds.MuxCommand):
 # end of muckcommands.py
 from ev import Command    
 
+
 class CmdApprove(Command):
     """
-    approves a character for IC
+    Approves or disapproves a character for IC play.
 
     Usage: 
       +approve <name>
 
-    Wizard only command that approves another character to go @IC.
+    Wizard only command that approves another character to go @IC. If executed
+    on a character that's already approved, it revokes approval.
     """
 
     key = "+approve"
+    locks = "cmd:perm(approve) or perm(Wizards)"
     help_category = "Wizard"
 
     def func(self):
-        "This approves or disapproves characters for IC play"
-        errmsg = "You must approve a character."
+        """This approves or disapproves characters for IC play"""
+        caller = self.caller
         if not self.args:
-            self.caller.msg(errmsg)      
+            caller.msg("Approve who?")
             return
-        # Use search to handle duplicate/nonexistant results.
-        app_obj = self.caller.search(self.args.name, use_nicks=True)
-        if not app_obj:
-            self.caller.msg(errmsg)     
+        print "wizard/approve:", caller, caller.location, self.args, caller.location.contents
+        obj = caller.search(self.args)
+        if not obj:
+            caller.msg("Approve who?")
             return
-        if not hasattr(app_obj, 'approved'):
-            self.caller.msg(errmsg)     
-            return
-        if not app_obj.approved:
-            app_obj.approved = True
-            self.caller.msg("You have approved '%s'." % self.args)
-            self.args.msg("You have been approved.")
+        print obj, obj.location, caller, caller == obj.location
+        if not obj.db.approved:
+            obj.db.approved = True
+            caller.msg("You have approved '%s'." % obj.name)
+            obj.msg("You have been approved.")
         else:
-            app_obj.approved = False
-            self.caller.msg("You have unapproved '%s'" % self.args)
-            self.args.msg("You have been unapproved.")
-     
+            obj.db.approved = False
+            caller.msg("You have unapproved '%s'" % obj.name)
+            obj.msg("You have been unapproved.")
