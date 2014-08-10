@@ -10,6 +10,7 @@ examples/cmdset.py)
 
 from ev import Command as BaseCommand
 from ev import default_cmds
+from contrib import menusystem
 from ev import utils
 
 
@@ -202,3 +203,99 @@ class CmdHoof(Command):
         if obj.db.character_notes or obj.db.player_notes or obj.db.rp_prefs:
             outstr += "{m==============================================================================\n"
         caller.msg(outstr)
+
+class CmdEditCharacter(Command):
+    """
+    This allows the player to edit their character.
+
+    Usage:
+      +editcharacter
+
+    This command allows the player to set fields on the current character. Must be @ic in order to set
+    values.
+    """
+
+    key = "+editcharacter"
+    aliases = ["editplayer", "editcharacter", "+editplayer"]
+    help_category = "General"
+
+    def func(self):
+        """This performs the actual command"""
+        caller = self.caller
+
+        "Testing the menu system"
+
+        node0 = menusystem.MenuNode("START", text="Character Editing",
+                         links=["fullname", "gender", "species", "alignment", "job", "age", "appage", "coat",
+                                "mane", "eyes", "cutie_mark", "sexuality", "height", "weight", "short_desc", "END"],
+                         linktexts=[
+                             ("Full Name: %s" % caller.db.full_name),
+                             ("Gender: %s" % caller.db.gender),
+                             ("Species: %s" % caller.db.species),
+                             ("Alignment: %s" % caller.db.alignment),
+                             ("Job or Class: %s" % caller.db.job),
+                             ("Age: %s" % caller.db.age),
+                             ("Apparent Age: %s" % caller.db.apparent_age),
+                             ("Coat: %s" % caller.db.coat),
+                             ("Mane: %s" % caller.db.mane),
+                             ("Eyes: %s" % caller.db.eyes),
+                             ("Cutie Mark: %s" % caller.db.cutie_mark),
+                             ("Sexuality: %s" % caller.db.sexuality),
+                             ("Height when Standing: %s" % caller.db.height),
+                             ("Weight: %s" % caller.db.weight),
+                             ("Short Desc for ws: %s" % caller.db.short_desc),
+                             "Quit"],
+                         keywords=["F", "G", "S", "AL", "J", "A", "AP", "C", "M", "E", "CM", "SE", "H", "W", "SD",
+                                   "Q"],
+                         cols=2)
+        node1 = menusystem.MenuNode("fullname", text=("Current First Name: %s" % caller.db.full_name),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node2 = menusystem.MenuNode("gender", text=("Current Gender: %s" % caller.db.gender),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node3 = menusystem.MenuNode("species", text=("Current Species: %s" % caller.db.species),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node3 = menusystem.MenuNode("species_select", text=("Current Species: %s" % caller.db.species),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node4 = menusystem.MenuNode("alignment", text=("Current Alignment: %s" % caller.db.alignment),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node5 = menusystem.MenuNode("job", text=("Current Job: %s" % caller.db.job),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node6 = menusystem.MenuNode("age", text=("Current Age: %s" % caller.db.age),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node7 = menusystem.MenuNode("appage", text=("Current Apparent Age: %s" % caller.db.apparent_age),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node8 = menusystem.MenuNode("coat", text=("Current Coat: %s" % caller.db.coat),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node9 = menusystem.MenuNode("mane", text=("Current Mane: %s" % caller.db.mane),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node10 = menusystem.MenuNode("eyes", text=("Current Eyes: %s" % caller.db.eyes),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node11 = menusystem.MenuNode("cutie_mark", text=("Current Cutie Mark: %s" % caller.db.cutie_mark),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node12 = menusystem.MenuNode("sexuality", text=("Current Sexuality: %s" % caller.db.sexuality),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node13 = menusystem.MenuNode("height", text=("Current Height: %s" % caller.db.height),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node14 = menusystem.MenuNode("weight", text=("Current Weight: %s" % caller.db.weight),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        node15 = menusystem.MenuNode("short_desc", text=("Current Short Desc: %s" % caller.db.short_desc),
+                         links=["END", "START"], linktexts=["Quit", "Back to start"],
+                         keywords=["Q", "B"])
+        menu = menusystem.MenuTree(self.caller, nodes=(node0, node1, node2, node3, node4, node5, node6, node7,
+                                                node8, node9, node10, node11, node12, node13, node14, node15))
+        menu.start()
