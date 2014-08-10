@@ -44,8 +44,8 @@ class Character(DefaultCharacter):
         self.db.approved = False
         
         self.db.full_name = ""
-        self.db.gender = ""
-        self.db.species = ""
+        self.db.gender = "(unset)"
+        self.db.species = "(unset)"
         self.db.alignment = ""
         self.db.job = ""
         self.db.age = ""

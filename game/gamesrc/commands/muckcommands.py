@@ -149,7 +149,7 @@ class CmdHoof(Command):
     help_category = "General"
 
     def func(self):
-        "This performs the actual command"
+        """This performs the actual command"""
         caller = self.caller
         if not self.args:
             caller.msg("Hoof who?")
@@ -161,6 +161,44 @@ class CmdHoof(Command):
             return
         #print obj, obj.location, caller, caller == obj.location
         outstr = "{m==============================================================================\n"
-        outstr += "%s the %s %s\n" % (obj.name, obj.gender, obj.species)
+        outstr += "{y%s {Wthe {g%s %s" % (obj.name, obj.db.gender, obj.db.species)
+        if caller.locks.check_lockstring(caller, "dummy:perm(Wizards)"):
+            if obj.db.approved:
+                outstr += " (Approved)\n"
+            else:
+                outstr += " {r(Unapproved)\n"
+        else:
+            outstr += "\n"
+        if obj.db.full_name:
+            outstr += "    Full Name: %s\n" % obj.db.full_name
+        if obj.db.alignment:
+            outstr += "    Alignment: %s\n" % obj.db.alignment
+        if obj.db.age:
+            outstr += "          Age: %s\n" % obj.db.age
+        if obj.db.apparent_age:
+            outstr += " Apparent Age: %s\n" % obj.db.apparent_age
+        if obj.db.sexuality:
+            outstr += "    Sexuality: %s\n" % obj.db.sexuality
+        if obj.db.coat:
+            outstr += "         Coat: %s\n" % obj.db.coat
+        if obj.db.mane:
+            outstr += "         Mane: %s\n" % obj.db.mane
+        if obj.db.cutie_mark:
+            outstr += "   Cutie Mark: %s\n" % obj.db.cutie_mark
+        if obj.db.eyes:
+            outstr += "         Eyes: %s\n" % obj.db.eyes
+        if obj.db.height:
+            outstr += "       Height: %s\n" % obj.db.height
+        if obj.db.weight:
+            outstr += "       Weight: %s\n" % obj.db.weight
+        #HOME
         outstr += "{m==============================================================================\n"
+        if obj.db.character_notes:
+            outstr += "Character Notes: %s\n" % obj.db.character_notes
+        if obj.db.player_notes:
+            outstr += "   Player Notes: %s\n" % obj.db.player_notes
+        if obj.db.rp_prefs:
+            outstr += " RP Preferences: %s\n" % obj.db.rp_prefs
+        if obj.db.character_notes or obj.db.player_notes or obj.db.rp_prefs:
+            outstr += "{m==============================================================================\n"
         caller.msg(outstr)
