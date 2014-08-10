@@ -71,8 +71,5 @@ class Character(DefaultCharacter):
         self.db.player_notes = ""
         self.db.character_notes = ""
         self.db.special = ""
-        
-        self.db.power = 1
-        self.db.combat_score = 1
-    
+
     pass
