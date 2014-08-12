@@ -8,132 +8,7 @@ examples/cmdset.py)
 
 """
 
-from ev import Command as BaseCommand
-from ev import default_cmds
-from contrib import menusystem
-from ev import utils
-
-
-class Command(BaseCommand):
-    """
-    Inherit from this if you want to create your own
-    command styles. Note that Evennia's default commands
-    use MuxCommand instead (next in this module)
-
-    Note that the class's __doc__ string (this text) is
-    used by Evennia to create the automatic help entry for
-    the command, so make sure to document consistently here.
-
-    """
-    # these need to be specified
-
-    key = "MyCommand"
-    aliases = ["mycmd", "myc"]
-    locks = "cmd:all()"
-    help_category = "General"
-
-    # auto_help = False      # uncomment to deactive auto-help for this command.
-    # arg_regex = r"\s.*?|$" # optional regex detailing how the part after
-                             # the cmdname must look to match this command.
-
-    # (we don't implement hook method access() here, you don't need to
-    #  modify that unless you want to change how the lock system works
-    #  (in that case see src.commands.command.Command))
-
-    def at_pre_cmd(self):
-        """
-        This hook is called before self.parse() on all commands
-        """
-        pass
-
-    def parse(self):
-        """
-        This method is called by the cmdhandler once the command name
-        has been identified. It creates a new set of member variables
-        that can be later accessed from self.func() (see below)
-
-        The following variables are available to us:
-           # class variables:
-
-           self.key - the name of this command ('mycommand')
-           self.aliases - the aliases of this cmd ('mycmd','myc')
-           self.locks - lock string for this command ("cmd:all()")
-           self.help_category - overall category of command ("General")
-
-           # added at run-time by cmdhandler:
-
-           self.caller - the object calling this command
-           self.cmdstring - the actual command name used to call this
-                            (this allows you to know which alias was used,
-                             for example)
-           self.args - the raw input; everything following self.cmdstring.
-           self.cmdset - the cmdset from which this command was picked. Not
-                         often used (useful for commands like 'help' or to
-                         list all available commands etc)
-           self.obj - the object on which this command was defined. It is often
-                         the same as self.caller.
-        """
-        pass
-
-    def func(self):
-        """
-        This is the hook function that actually does all the work. It is called
-         by the cmdhandler right after self.parser() finishes, and so has access
-         to all the variables defined therein.
-        """
-        self.caller.msg("Command called!")
-
-    def at_post_cmd(self):
-        """
-        This hook is called after self.func().
-        """
-        pass
-
-
-class MuxCommand(default_cmds.MuxCommand):
-    """
-    This sets up the basis for a Evennia's 'MUX-like' command
-    style. The idea is that most other Mux-related commands should
-    just inherit from this and don't have to implement parsing of
-    their own unless they do something particularly advanced.
-
-    A MUXCommand command understands the following possible syntax:
-
-      name[ with several words][/switch[/switch..]] arg1[,arg2,...] [[=|,] arg[,..]]
-
-    The 'name[ with several words]' part is already dealt with by the
-    cmdhandler at this point, and stored in self.cmdname. The rest is stored
-    in self.args.
-
-    The MuxCommand parser breaks self.args into its constituents and stores them
-    in the following variables:
-      self.switches = optional list of /switches (without the /)
-      self.raw = This is the raw argument input, including switches
-      self.args = This is re-defined to be everything *except* the switches
-      self.lhs = Everything to the left of = (lhs:'left-hand side'). If
-                 no = is found, this is identical to self.args.
-      self.rhs: Everything to the right of = (rhs:'right-hand side').
-                If no '=' is found, this is None.
-      self.lhslist - self.lhs split into a list by comma
-      self.rhslist - list of self.rhs split into a list by comma
-      self.arglist = list of space-separated args (including '=' if it exists)
-
-      All args and list members are stripped of excess whitespace around the
-      strings, but case is preserved.
-      """
-
-    def func(self):
-        """
-        This is the hook function that actually does all the work. It is called
-        by the cmdhandler right after self.parser() finishes, and so has access
-        to all the variables defined therein.
-        """
-        # this can be removed in your child class, it's just
-        # printing the ingoing variables as a demo.
-        super(MuxCommand, self).func()
-
-# end of muckcommands.py
-from ev import Command    
+from ev import Command
 
 class CmdHoof(Command):
     """
@@ -156,7 +31,10 @@ class CmdHoof(Command):
             caller.msg("Hoof who?")
             return
         #print "general/hoof:", caller, caller.location, self.args, caller.location.contents
-        obj = caller.search(self.args)
+        if self.args == " me":
+            obj = caller
+        else:
+            obj = caller.search(self.args)
         if not obj:
             caller.msg("Hoof who?")
             return
@@ -171,131 +49,35 @@ class CmdHoof(Command):
         else:
             outstr += "\n"
         if obj.db.full_name:
-            outstr += "    Full Name: %s\n" % obj.db.full_name
+            outstr += "    {wFull Name: {g%s\n" % obj.db.full_name
         if obj.db.alignment:
-            outstr += "    Alignment: %s\n" % obj.db.alignment
+            outstr += "    {wAlignment: {g%s\n" % obj.db.alignment
         if obj.db.age:
-            outstr += "          Age: %s\n" % obj.db.age
+            outstr += "          {wAge: {g%s\n" % obj.db.age
         if obj.db.apparent_age:
-            outstr += " Apparent Age: %s\n" % obj.db.apparent_age
+            outstr += " {wApparent Age: {g%s\n" % obj.db.apparent_age
         if obj.db.sexuality:
-            outstr += "    Sexuality: %s\n" % obj.db.sexuality
+            outstr += "    {wSexuality: {g%s\n" % obj.db.sexuality
         if obj.db.coat:
-            outstr += "         Coat: %s\n" % obj.db.coat
+            outstr += "         {wCoat: {g%s\n" % obj.db.coat
         if obj.db.mane:
-            outstr += "         Mane: %s\n" % obj.db.mane
+            outstr += "         {wMane: {g%s\n" % obj.db.mane
         if obj.db.cutie_mark:
-            outstr += "   Cutie Mark: %s\n" % obj.db.cutie_mark
+            outstr += "   {wCutie Mark: {g%s\n" % obj.db.cutie_mark
         if obj.db.eyes:
-            outstr += "         Eyes: %s\n" % obj.db.eyes
+            outstr += "         {wEyes: {g%s\n" % obj.db.eyes
         if obj.db.height:
-            outstr += "       Height: %s\n" % obj.db.height
+            outstr += "       {wHeight: {g%s\n" % obj.db.height
         if obj.db.weight:
-            outstr += "       Weight: %s\n" % obj.db.weight
+            outstr += "       {wWeight: {g%s\n" % obj.db.weight
         #HOME
         outstr += "{m==============================================================================\n"
         if obj.db.character_notes:
-            outstr += "Character Notes: %s\n" % obj.db.character_notes
+            outstr += "Character Notes: {g%s\n" % obj.db.character_notes
         if obj.db.player_notes:
-            outstr += "   Player Notes: %s\n" % obj.db.player_notes
+            outstr += "   Player Notes: {g%s\n" % obj.db.player_notes
         if obj.db.rp_prefs:
-            outstr += " RP Preferences: %s\n" % obj.db.rp_prefs
+            outstr += " RP Preferences: {g%s\n" % obj.db.rp_prefs
         if obj.db.character_notes or obj.db.player_notes or obj.db.rp_prefs:
             outstr += "{m==============================================================================\n"
         caller.msg(outstr)
-
-class CmdEditCharacter(Command):
-    """
-    This allows the player to edit their character.
-
-    Usage:
-      +editcharacter
-
-    This command allows the player to set fields on the current character. Must be @ic in order to set
-    values.
-    """
-
-    key = "+editcharacter"
-    aliases = ["editplayer", "editcharacter", "+editplayer"]
-    help_category = "General"
-
-    def func(self):
-        """This performs the actual command"""
-        caller = self.caller
-
-        "Testing the menu system"
-
-        node0 = menusystem.MenuNode("START", text="Character Editing",
-                         links=["fullname", "gender", "species", "alignment", "job", "age", "appage", "coat",
-                                "mane", "eyes", "cutie_mark", "sexuality", "height", "weight", "short_desc", "END"],
-                         linktexts=[
-                             ("Full Name: %s" % caller.db.full_name),
-                             ("Gender: %s" % caller.db.gender),
-                             ("Species: %s" % caller.db.species),
-                             ("Alignment: %s" % caller.db.alignment),
-                             ("Job or Class: %s" % caller.db.job),
-                             ("Age: %s" % caller.db.age),
-                             ("Apparent Age: %s" % caller.db.apparent_age),
-                             ("Coat: %s" % caller.db.coat),
-                             ("Mane: %s" % caller.db.mane),
-                             ("Eyes: %s" % caller.db.eyes),
-                             ("Cutie Mark: %s" % caller.db.cutie_mark),
-                             ("Sexuality: %s" % caller.db.sexuality),
-                             ("Height when Standing: %s" % caller.db.height),
-                             ("Weight: %s" % caller.db.weight),
-                             ("Short Desc for ws: %s" % caller.db.short_desc),
-                             "Quit"],
-                         keywords=["F", "G", "S", "AL", "J", "A", "AP", "C", "M", "E", "CM", "SE", "H", "W", "SD",
-                                   "Q"],
-                         cols=2)
-        node1 = menusystem.MenuNode("fullname", text=("Current First Name: %s" % caller.db.full_name),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node2 = menusystem.MenuNode("gender", text=("Current Gender: %s" % caller.db.gender),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node3 = menusystem.MenuNode("species", text=("Current Species: %s" % caller.db.species),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node3 = menusystem.MenuNode("species_select", text=("Current Species: %s" % caller.db.species),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node4 = menusystem.MenuNode("alignment", text=("Current Alignment: %s" % caller.db.alignment),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node5 = menusystem.MenuNode("job", text=("Current Job: %s" % caller.db.job),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node6 = menusystem.MenuNode("age", text=("Current Age: %s" % caller.db.age),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node7 = menusystem.MenuNode("appage", text=("Current Apparent Age: %s" % caller.db.apparent_age),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node8 = menusystem.MenuNode("coat", text=("Current Coat: %s" % caller.db.coat),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node9 = menusystem.MenuNode("mane", text=("Current Mane: %s" % caller.db.mane),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node10 = menusystem.MenuNode("eyes", text=("Current Eyes: %s" % caller.db.eyes),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node11 = menusystem.MenuNode("cutie_mark", text=("Current Cutie Mark: %s" % caller.db.cutie_mark),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node12 = menusystem.MenuNode("sexuality", text=("Current Sexuality: %s" % caller.db.sexuality),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node13 = menusystem.MenuNode("height", text=("Current Height: %s" % caller.db.height),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node14 = menusystem.MenuNode("weight", text=("Current Weight: %s" % caller.db.weight),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        node15 = menusystem.MenuNode("short_desc", text=("Current Short Desc: %s" % caller.db.short_desc),
-                         links=["END", "START"], linktexts=["Quit", "Back to start"],
-                         keywords=["Q", "B"])
-        menu = menusystem.MenuTree(self.caller, nodes=(node0, node1, node2, node3, node4, node5, node6, node7,
-                                                node8, node9, node10, node11, node12, node13, node14, node15))
-        menu.start()

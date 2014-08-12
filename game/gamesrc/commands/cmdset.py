@@ -27,8 +27,7 @@ To add a wholly new command set:
 
 from ev import CmdSet, Command
 from ev import default_cmds
-from game.gamesrc.commands import muckcommands
-from game.gamesrc.commands import wizcommands
+from game.gamesrc.commands import muckcommands, wizcommands, editplayer
 from contrib import menusystem, lineeditor
 
 #from contrib import misc_commands
@@ -78,7 +77,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
 
         # General character commands
         self.add(muckcommands.CmdHoof())
-        self.add(muckcommands.CmdEditCharacter())
+        self.add(editplayer.CmdEditCharacter())
 
         # Admin commands
         self.add(wizcommands.CmdApprove())
